@@ -3,7 +3,7 @@ package com.spinoza.shoppinglist.domain
 data class ShopItem(
     val name: String,
     val count: Float,
-    val enabled: Boolean,
+    var enabled: Boolean,
     var id: Int = UNDEFINED_ID,
 ) {
     companion object {
