@@ -32,7 +32,7 @@ object ShopListRepositoryImpl : ShopListRepository {
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-        shopList.removeAt(shopItem.id)
+        shopList.remove(getShopItem(shopItem.id))
         addShopItem(shopItem)
     }
 
