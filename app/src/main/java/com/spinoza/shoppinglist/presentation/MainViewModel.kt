@@ -2,16 +2,13 @@ package com.spinoza.shoppinglist.presentation
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
 import com.spinoza.shoppinglist.domain.ShopItem
+import com.spinoza.shoppinglist.domain.ShopListRepository
 import com.spinoza.shoppinglist.domain.usecases.DeleteShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.EditShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.GetShopListUseCase
 
-class MainViewModel : ViewModel() {
-
-    // TODO: fix it later!
-    private val repository = ShopListRepositoryImpl
+class MainViewModel(private val repository: ShopListRepository) : ViewModel() {
 
     private val getShopListUseCase = GetShopListUseCase(repository)
     private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
