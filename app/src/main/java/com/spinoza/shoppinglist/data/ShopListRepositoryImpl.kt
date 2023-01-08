@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.spinoza.shoppinglist.domain.ShopItem
 import com.spinoza.shoppinglist.domain.ShopListRepository
+import kotlin.random.Random
 
 object ShopListRepositoryImpl : ShopListRepository {
 
@@ -15,7 +16,7 @@ object ShopListRepositoryImpl : ShopListRepository {
 
     init {
         for (i in 0 until 20) {
-            val item = ShopItem("Name $i", i.toFloat(), true)
+            val item = ShopItem("Name $i", i.toFloat(), Random.nextBoolean())
             addShopItem(item)
         }
     }

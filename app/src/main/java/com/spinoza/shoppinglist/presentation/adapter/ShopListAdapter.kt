@@ -20,8 +20,13 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
+        val layout = if (viewType == TYPE_ENABLED) {
+            R.layout.item_shop_enabled
+        } else {
+            R.layout.item_shop_disabled
+        }
         val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_shop_disabled,
+            layout,
             parent,
             false
         )
@@ -33,6 +38,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         with(holder) {
             textViewName.text = shopItem.name
             textViewCount.text = shopItem.count.toString()
+
             view.setOnLongClickListener {
                 true
             }
@@ -41,8 +47,21 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
 
     override fun getItemCount(): Int = shopList.size
 
+    override fun getItemViewType(position: Int): Int {
+        return if (shopList[position].enabled) {
+            TYPE_ENABLED
+        } else {
+            TYPE_DISABLED
+        }
+    }
+
     class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val textViewName: TextView = view.findViewById(R.id.textViewName)
         val textViewCount: TextView = view.findViewById(R.id.textViewCount)
+    }
+
+    companion object {
+        private const val TYPE_ENABLED = 0
+        private const val TYPE_DISABLED = 1
     }
 }
