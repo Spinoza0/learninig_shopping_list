@@ -1,4 +1,4 @@
-package com.spinoza.shoppinglist.presentation
+package com.spinoza.shoppinglist.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
