@@ -11,6 +11,8 @@ import com.spinoza.shoppinglist.domain.ShopItem
 
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
 
+    var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
+
     var shopList = listOf<ShopItem>()
         set(value) {
             val diffUtilCallback = ShopListDiffUtilCallback(field, value)
@@ -40,6 +42,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
             textViewCount.text = shopItem.count.toString()
 
             view.setOnLongClickListener {
+                onShopItemLongClickListener?.invoke(shopItem)
                 true
             }
         }
