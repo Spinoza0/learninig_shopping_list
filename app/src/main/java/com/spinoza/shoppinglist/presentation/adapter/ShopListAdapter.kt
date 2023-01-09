@@ -86,11 +86,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldList[oldItemPosition]
-            val newItem = newList[newItemPosition]
-            return oldItem.enabled == newItem.enabled &&
-                    oldItem.count == newItem.count &&
-                    oldItem.name == newItem.name
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
     }
 
