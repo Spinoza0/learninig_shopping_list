@@ -12,6 +12,7 @@ import com.spinoza.shoppinglist.domain.ShopItem
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
 
     var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
+    var onShopItemClickListener: ((ShopItem) -> Unit)? = null
 
     var shopList = listOf<ShopItem>()
         set(value) {
@@ -44,6 +45,10 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
             view.setOnLongClickListener {
                 onShopItemLongClickListener?.invoke(shopItem)
                 true
+            }
+
+            view.setOnClickListener {
+                onShopItemClickListener?.invoke(shopItem)
             }
         }
     }

@@ -3,6 +3,7 @@ package com.spinoza.shoppinglist.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
+    private lateinit var recyclerViewShopList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +33,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        with(findViewById<RecyclerView>(R.id.recyclerViewShopList)) {
+        recyclerViewShopList = findViewById<RecyclerView>(R.id.recyclerViewShopList)
+        with(recyclerViewShopList) {
             shopListAdapter = ShopListAdapter()
             adapter = shopListAdapter
             recycledViewPool.setMaxRecycledViews(
@@ -43,6 +46,26 @@ class MainActivity : AppCompatActivity() {
                 ShopListAdapter.MAX_POOL_SIZE
             )
         }
+
+        setupListeners()
+    }
+
+    private fun setupListeners() {
         shopListAdapter.onShopItemLongClickListener = { viewModel.changeEnableState(it) }
+        shopListAdapter.onShopItemClickListener = { TODO() }
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                viewModel.deleteShopItem(shopListAdapter.shopList[viewHolder.adapterPosition])
+            }
+        }).attachToRecyclerView(recyclerViewShopList)
     }
 }
