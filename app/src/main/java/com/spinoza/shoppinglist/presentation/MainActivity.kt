@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         )[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
-            shopListAdapter.shopList = it
+            shopListAdapter.submitList(it)
         }
     }
 
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             ): Boolean = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                viewModel.deleteShopItem(shopListAdapter.shopList[viewHolder.adapterPosition])
+                viewModel.deleteShopItem(shopListAdapter.currentList[viewHolder.adapterPosition])
             }
         }).attachToRecyclerView(recyclerViewShopList)
     }
