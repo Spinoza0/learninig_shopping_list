@@ -15,7 +15,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
 
     var shopList = listOf<ShopItem>()
         set(value) {
-            val diffUtilCallback = ShopListDiffUtilCallback(field, value)
+            val diffUtilCallback = DiffUtilCallback(field, value)
             val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
             field = value
             diffResult.dispatchUpdatesTo(this)
@@ -61,6 +61,32 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
     class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val textViewName: TextView = view.findViewById(R.id.textViewName)
         val textViewCount: TextView = view.findViewById(R.id.textViewCount)
+    }
+
+    private class DiffUtilCallback(
+        private var oldList: List<ShopItem>,
+        private var newList: List<ShopItem>,
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int {
+            return oldList.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newList.size
+        }
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].id == newList[newItemPosition].id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldList[oldItemPosition]
+            val newItem = newList[newItemPosition]
+            return oldItem.enabled == newItem.enabled &&
+                    oldItem.count == newItem.count &&
+                    oldItem.name == newItem.name
+        }
     }
 
     companion object {
