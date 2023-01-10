@@ -9,7 +9,7 @@ import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
 import com.spinoza.shoppinglist.presentation.adapter.ShopListAdapter
 import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModel
-import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModelFactory
+import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(ShopListRepositoryImpl)
+            ViewModelFactory(ShopListRepositoryImpl)
         )[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
