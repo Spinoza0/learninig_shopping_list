@@ -33,15 +33,15 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent()
-        initViews()
+//        initViews()
 
         viewModel = ViewModelProvider(
             this,
             ViewModelFactory(ShopListRepositoryImpl)
         )[ShopItemViewModel::class.java]
 
-        setupScreen()
-        launchRightMode()
+ //       setupScreen()
+ //       launchRightMode()
     }
 
     private fun launchRightMode() {
