@@ -5,7 +5,7 @@ data class ShopItem(
     val count: Float,
     var enabled: Boolean,
     var id: Int = UNDEFINED_ID,
-) {
+) : java.io.Serializable {
     companion object {
         const val UNDEFINED_ID = -1
     }

@@ -5,26 +5,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
 import com.spinoza.shoppinglist.presentation.adapter.ShopListAdapter
 import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModel
-import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModelFactory
+import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private lateinit var recyclerViewShopList: RecyclerView
+    private lateinit var buttonAddShopItem: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        initViews()
         setupRecyclerView()
+        setupListeners()
 
         viewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(ShopListRepositoryImpl)
+            ViewModelFactory(ShopListRepositoryImpl)
         )[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
@@ -32,8 +37,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initViews() {
+        recyclerViewShopList = findViewById(R.id.recyclerViewShopList)
+        buttonAddShopItem = findViewById(R.id.buttonAddShopItem)
+    }
+
     private fun setupRecyclerView() {
-        recyclerViewShopList = findViewById<RecyclerView>(R.id.recyclerViewShopList)
         with(recyclerViewShopList) {
             shopListAdapter = ShopListAdapter()
             adapter = shopListAdapter
@@ -46,13 +55,18 @@ class MainActivity : AppCompatActivity() {
                 ShopListAdapter.MAX_POOL_SIZE
             )
         }
-
-        setupListeners()
     }
 
     private fun setupListeners() {
         shopListAdapter.onShopItemLongClickListener = { viewModel.changeEnableState(it) }
-        shopListAdapter.onShopItemClickListener = { TODO() }
+
+        shopListAdapter.onShopItemClickListener = {
+            startActivity(ShopItemActivity.newIntentEdit(this, it.id))
+        }
+
+        buttonAddShopItem.setOnClickListener {
+            startActivity(ShopItemActivity.newIntentAdd(this))
+        }
 
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
