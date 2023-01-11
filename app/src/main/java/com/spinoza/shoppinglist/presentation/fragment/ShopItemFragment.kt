@@ -17,10 +17,7 @@ import com.spinoza.shoppinglist.domain.ShopItem
 import com.spinoza.shoppinglist.presentation.viewmodel.ShopItemViewModel
 import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 
-class ShopItemFragment(
-    private val screenMode: String = MODE_UNKNOWN,
-    private val shopItemId: Int = ShopItem.UNDEFINED_ID,
-) : Fragment() {
+class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
 
@@ -29,6 +26,14 @@ class ShopItemFragment(
     private lateinit var textInputLayoutCount: TextInputLayout
     private lateinit var editTextCount: TextInputEditText
     private lateinit var buttonSave: Button
+
+    private var screenMode: String = MODE_UNKNOWN
+    private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,8 +45,6 @@ class ShopItemFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        parseParams()
 
         viewModel = ViewModelProvider(
             this,
@@ -125,7 +128,7 @@ class ShopItemFragment(
         })
     }
 
-
+    // TODO: save edit fields while rotate screen
     private fun initViews(view: View) {
         with(view) {
             textInputLayoutName = findViewById(R.id.textInputLayoutName)
@@ -136,28 +139,43 @@ class ShopItemFragment(
         }
     }
 
-
     private fun parseParams() {
-        if (screenMode == MODE_ADD || screenMode == MODE_EDIT) {
-            if (screenMode == MODE_EDIT && shopItemId == ShopItem.UNDEFINED_ID) {
-                throw RuntimeException("Param shop item id is absent")
-            }
-        } else throw RuntimeException("Param screen mode is absent or unknown")
+        val args = requireArguments()
+        if (args.containsKey(SCREEN_MODE)) {
+            val mode = args.getString(SCREEN_MODE)
+            if (mode == MODE_ADD || mode == MODE_EDIT) {
+                screenMode = mode
+                if (screenMode == MODE_EDIT) {
+                    if (args.containsKey(SHOP_ITEM_ID)) {
+                        shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
+                    } else throw RuntimeException("Param shop item id is absent")
+                }
+            } else throw RuntimeException("Unknown screen mode $mode")
+        } else throw RuntimeException("Param screen mode is absent")
     }
 
     companion object {
-        const val EXTRA_SHOP_ITEM_ID = "extra_shop_item_id"
-        const val EXTRA_SCREEN_MODE = "extra_mode"
+        const val SHOP_ITEM_ID = "extra_shop_item_id"
+        const val SCREEN_MODE = "extra_mode"
         const val MODE_ADD = "mode_add"
         const val MODE_EDIT = "mode_edit"
-        const val MODE_UNKNOWN = ""
+        const val MODE_UNKNOWN = "mode_unknown"
 
         fun newInstanceAddItem(): ShopItemFragment {
-            return ShopItemFragment(MODE_ADD)
+            return ShopItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(SCREEN_MODE, MODE_ADD)
+                }
+            }
         }
 
         fun newInstanceEditItem(shopItemId: Int): ShopItemFragment {
-            return ShopItemFragment(MODE_EDIT, shopItemId)
+            return ShopItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(SCREEN_MODE, MODE_EDIT)
+                    putInt(SHOP_ITEM_ID, shopItemId)
+                }
+            }
         }
     }
 }
