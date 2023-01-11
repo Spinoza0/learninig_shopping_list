@@ -20,7 +20,7 @@
         app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textEditName"
+            android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/name"
@@ -41,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutName">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textEditCount"
+            android:id="@+id/editTextCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/count"
