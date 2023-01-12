@@ -29,6 +29,8 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+    private var savedName: String? = null
+    private var savedCount: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,10 @@ class ShopItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        savedInstanceState?.let {
+            savedName = it.getString(SAVED_NAME)
+            savedCount = it.getString(SAVED_COUNT)
+        }
         return inflater.inflate(R.layout.fragment_shop_item, container, false)
     }
 
@@ -60,6 +66,18 @@ class ShopItemFragment : Fragment() {
 
         setupScreen()
         launchRightMode()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        savedName?.let { editTextName.setText(it) }
+        savedCount?.let { editTextCount.setText(it) }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(SAVED_NAME, editTextName.text?.toString())
+        outState.putString(SAVED_COUNT, editTextCount.text?.toString())
+        super.onSaveInstanceState(outState)
     }
 
     private fun launchRightMode() {
@@ -86,6 +104,7 @@ class ShopItemFragment : Fragment() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             // TODO: fix it later
             activity?.onBackPressed()
+            //activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
         }
         viewModel.shopItem.observe(viewLifecycleOwner) {
             editTextName.setText(it.name)
@@ -128,7 +147,6 @@ class ShopItemFragment : Fragment() {
         })
     }
 
-    // TODO: save edit fields while rotate screen
     private fun initViews(view: View) {
         with(view) {
             textInputLayoutName = findViewById(R.id.textInputLayoutName)
@@ -155,6 +173,8 @@ class ShopItemFragment : Fragment() {
     }
 
     companion object {
+        private const val SAVED_NAME = "name"
+        private const val SAVED_COUNT = "count"
         const val SHOP_ITEM_ID = "extra_shop_item_id"
         const val SCREEN_MODE = "extra_mode"
         const val MODE_ADD = "mode_add"
