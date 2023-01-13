@@ -43,6 +43,10 @@ class ShopItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        savedInstanceState?.let {
+            savedName = it.getString(SAVED_NAME)
+            savedCount = it.getString(SAVED_COUNT)
+        }
         parseParams()
     }
 
@@ -51,10 +55,6 @@ class ShopItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        savedInstanceState?.let {
-            savedName = it.getString(SAVED_NAME)
-            savedCount = it.getString(SAVED_COUNT)
-        }
         return inflater.inflate(R.layout.fragment_shop_item, container, false)
     }
 
