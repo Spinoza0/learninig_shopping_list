@@ -2,6 +2,7 @@ package com.spinoza.shoppinglist.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
 import com.spinoza.shoppinglist.presentation.adapter.ShopListAdapter
+import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
 import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModel
 import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 
@@ -18,12 +20,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var shopListAdapter: ShopListAdapter
     private lateinit var recyclerViewShopList: RecyclerView
     private lateinit var buttonAddShopItem: FloatingActionButton
+    private var shopItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         initViews()
+
         setupRecyclerView()
         setupListeners()
 
@@ -40,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     private fun initViews() {
         recyclerViewShopList = findViewById(R.id.recyclerViewShopList)
         buttonAddShopItem = findViewById(R.id.buttonAddShopItem)
+        shopItemContainer = findViewById(R.id.shopItemContainer)
     }
 
     private fun setupRecyclerView() {
@@ -60,13 +64,9 @@ class MainActivity : AppCompatActivity() {
     private fun setupListeners() {
         shopListAdapter.onShopItemLongClickListener = { viewModel.changeEnableState(it) }
 
-        shopListAdapter.onShopItemClickListener = {
-            startActivity(ShopItemActivity.newIntentEdit(this, it.id))
-        }
+        shopListAdapter.onShopItemClickListener = { editShopItem(it.id) }
 
-        buttonAddShopItem.setOnClickListener {
-            startActivity(ShopItemActivity.newIntentAdd(this))
-        }
+        buttonAddShopItem.setOnClickListener { addShopItem() }
 
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
@@ -81,5 +81,31 @@ class MainActivity : AppCompatActivity() {
                 viewModel.deleteShopItem(shopListAdapter.currentList[viewHolder.adapterPosition])
             }
         }).attachToRecyclerView(recyclerViewShopList)
+    }
+
+    private fun isOnePanelMode(): Boolean = shopItemContainer == null
+
+    private fun addShopItem() {
+        if (isOnePanelMode()) {
+            startActivity(ShopItemActivity.newIntentAdd(this))
+        } else {
+            launchFragment(ShopItemFragment.newInstanceAddItem())
+        }
+    }
+
+    private fun editShopItem(shopItemId: Int) {
+        if (isOnePanelMode()) {
+            startActivity(ShopItemActivity.newIntentEdit(this, shopItemId))
+        } else {
+            launchFragment(ShopItemFragment.newInstanceEditItem(shopItemId))
+        }
+    }
+
+    private fun launchFragment(shopItemFragment: ShopItemFragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shopItemContainer, shopItemFragment)
+            .addToBackStack(null)
+            .commit()
     }
 }
