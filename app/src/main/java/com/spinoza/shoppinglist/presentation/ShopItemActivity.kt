@@ -13,7 +13,7 @@ import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.MODE_EDIT
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.MODE_UNKNOWN
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -25,6 +25,11 @@ class ShopItemActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             launchRightMode()
         }
+    }
+
+    override fun onEditingFinished() {
+        supportFragmentManager.popBackStack()
+        finish()
     }
 
     private fun launchRightMode() {

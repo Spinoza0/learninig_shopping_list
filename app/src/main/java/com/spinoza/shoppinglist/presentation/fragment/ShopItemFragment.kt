@@ -1,5 +1,6 @@
 package com.spinoza.shoppinglist.presentation.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,6 +21,7 @@ import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     private lateinit var textInputLayoutName: TextInputLayout
     private lateinit var editTextName: TextInputEditText
@@ -31,6 +33,13 @@ class ShopItemFragment : Fragment() {
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
     private var savedName: String? = null
     private var savedCount: String? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else throw RuntimeException("Activity must implement OnEditingFinishedListener")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,9 +111,7 @@ class ShopItemFragment : Fragment() {
 
     private fun setupScreen() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            // TODO: fix it later
-            activity?.onBackPressed()
-            //activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+            onEditingFinishedListener.onEditingFinished()
         }
         viewModel.shopItem.observe(viewLifecycleOwner) {
             editTextName.setText(it.name)
@@ -170,6 +177,10 @@ class ShopItemFragment : Fragment() {
                 }
             } else throw RuntimeException("Unknown screen mode $mode")
         } else throw RuntimeException("Param screen mode is absent")
+    }
+
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
     }
 
     companion object {

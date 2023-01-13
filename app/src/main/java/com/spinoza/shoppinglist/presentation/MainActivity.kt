@@ -14,7 +14,7 @@ import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
 import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModel
 import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
@@ -107,5 +107,10 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.shopItemContainer, shopItemFragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onEditingFinished() {
+        supportFragmentManager.popBackStack()
+        // TODO: move position to edited element
     }
 }
