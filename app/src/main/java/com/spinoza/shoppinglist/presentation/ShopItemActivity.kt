@@ -7,16 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.domain.ShopItem
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
-import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.SCREEN_MODE
-import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.SHOP_ITEM_ID
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.MODE_ADD
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.MODE_EDIT
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.MODE_UNKNOWN
+import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.SCREEN_MODE
+import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.SHOP_ITEM_ID
 
 class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
+    private var shopItemPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,16 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
 
     override fun onEditingFinished() {
         supportFragmentManager.popBackStack()
+        startActivity(
+            if (screenMode == MODE_ADD) MainActivity.newIntentMoveToEnd(this)
+            else MainActivity.newIntentRestorePosition(this, shopItemPosition)
+        )
+        finish()
+    }
+
+    // TODO: fix it later
+    override fun onBackPressed() {
+        startActivity(MainActivity.newIntentRestorePosition(this, shopItemPosition))
         finish()
     }
 
@@ -47,6 +58,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
         if (intent.hasExtra(SCREEN_MODE)) {
             val mode = intent.getStringExtra(SCREEN_MODE)
             if (mode == MODE_ADD || mode == MODE_EDIT) {
+                shopItemPosition = intent.getIntExtra(FIRST_VISIBLE_POSITION, 0)
                 screenMode = mode
                 if (screenMode == MODE_EDIT) {
                     if (intent.hasExtra(SHOP_ITEM_ID)) {
@@ -59,16 +71,19 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
     }
 
     companion object {
-        fun newIntentEdit(context: Context, shopItemId: Int): Intent {
+        private const val FIRST_VISIBLE_POSITION = "position"
+        fun newIntentEdit(context: Context, shopItemId: Int, firstVisiblePosition: Int): Intent {
             return Intent(context, ShopItemActivity::class.java).apply {
                 putExtra(SCREEN_MODE, MODE_EDIT)
                 putExtra(SHOP_ITEM_ID, shopItemId)
+                putExtra(FIRST_VISIBLE_POSITION, firstVisiblePosition)
             }
         }
 
-        fun newIntentAdd(context: Context): Intent {
+        fun newIntentAdd(context: Context, firstVisiblePosition: Int): Intent {
             return Intent(context, ShopItemActivity::class.java).apply {
                 putExtra(SCREEN_MODE, MODE_ADD)
+                putExtra(FIRST_VISIBLE_POSITION, firstVisiblePosition)
             }
         }
     }
