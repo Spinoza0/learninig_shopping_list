@@ -9,7 +9,7 @@ import com.spinoza.shoppinglist.domain.ShopItem
 class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
 
     var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
-    var onShopItemClickListener: ((ShopItem) -> Unit)? = null
+    var onShopItemClickListener: ((ShopItem, Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
         val layout = when (viewType) {
@@ -37,7 +37,7 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCa
             }
 
             view.setOnClickListener {
-                onShopItemClickListener?.invoke(shopItem)
+                onShopItemClickListener?.invoke(shopItem, position)
             }
         }
     }
