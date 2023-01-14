@@ -3,6 +3,7 @@ package com.spinoza.shoppinglist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.domain.ShopItem
@@ -21,6 +22,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         setContentView(R.layout.activity_shop_item)
         parseParams()
         if (savedInstanceState == null) {
@@ -37,10 +39,12 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
         finish()
     }
 
-    // TODO: fix it later
-    override fun onBackPressed() {
-        startActivity(MainActivity.newIntentRestorePosition(this, shopItemPosition))
-        finish()
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            startActivity(MainActivity.newIntentRestorePosition(this@ShopItemActivity,
+                shopItemPosition))
+            finish()
+        }
     }
 
     private fun launchRightMode() {
