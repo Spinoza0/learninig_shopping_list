@@ -59,6 +59,7 @@ class ShopItemFragment : Fragment() {
             ViewModelFactory(ShopListRepositoryImpl)
         )[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
 
         setupScreen()
         launchRightMode()
