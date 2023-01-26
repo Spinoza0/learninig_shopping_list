@@ -35,7 +35,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/name"
                 android:inputType="textCapWords"
-                android:text="@{viewModel.shopItem.name}" />
+                android:text="@{viewModel.shopItem.name}"
+                app:textChangeListener="@{() -> viewModel.resetErrorInputName() }" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/count"
                 android:inputType="numberDecimal"
-                android:text="@{String.valueOf(viewModel.shopItem.count)}" />
+                android:text="@{String.valueOf(viewModel.shopItem.count)}"
+                app:textChangeListener="@{() -> viewModel.resetErrorInputCount() }" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
