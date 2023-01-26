@@ -4,14 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
+import com.spinoza.shoppinglist.databinding.ActivityMainBinding
 import com.spinoza.shoppinglist.presentation.adapter.ShopListAdapter
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
 import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModel
@@ -20,10 +19,9 @@ import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var binding: ActivityMainBinding
     private lateinit var shopListAdapter: ShopListAdapter
-    private lateinit var recyclerViewShopList: RecyclerView
-    private lateinit var buttonAddShopItem: FloatingActionButton
-    private var shopItemContainer: FragmentContainerView? = null
+
     private var needMoveToLastPosition = false
     private var needRestorePosition = false
     private var firstVisiblePosition = 0
@@ -31,8 +29,8 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        initViews()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel = ViewModelProvider(
             this,
@@ -61,23 +59,18 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it) {
                 if (needMoveToLastPosition) {
-                    recyclerViewShopList.scrollToPosition(shopListAdapter.itemCount - 1)
+                    binding.recyclerViewShopList
+                        .scrollToPosition(shopListAdapter.itemCount - 1)
                     needMoveToLastPosition = false
                 } else if (needRestorePosition) {
-                    recyclerViewShopList.scrollToPosition(firstVisiblePosition)
+                    binding.recyclerViewShopList.scrollToPosition(firstVisiblePosition)
                 }
             }
         }
     }
 
-    private fun initViews() {
-        recyclerViewShopList = findViewById(R.id.recyclerViewShopList)
-        buttonAddShopItem = findViewById(R.id.buttonAddShopItem)
-        shopItemContainer = findViewById(R.id.shopItemContainer)
-    }
-
     private fun setupRecyclerView() {
-        with(recyclerViewShopList) {
+        with(binding.recyclerViewShopList) {
             shopListAdapter = ShopListAdapter()
             adapter = shopListAdapter
             recycledViewPool.setMaxRecycledViews(
@@ -98,7 +91,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             editShopItem(shopItem.id, getFirstVisiblePosition(shopItemPosition))
         }
 
-        buttonAddShopItem.setOnClickListener {
+        binding.buttonAddShopItem.setOnClickListener {
             addShopItem(getFirstVisiblePosition(DEFAULT_VISIBLE_POSITION))
         }
 
@@ -114,19 +107,19 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 viewModel.deleteShopItem(shopListAdapter.currentList[viewHolder.adapterPosition])
             }
-        }).attachToRecyclerView(recyclerViewShopList)
+        }).attachToRecyclerView(binding.recyclerViewShopList)
     }
 
     private fun getFirstVisiblePosition(default: Int): Int {
-        return if (recyclerViewShopList.layoutManager is LinearLayoutManager) {
-            (recyclerViewShopList.layoutManager as LinearLayoutManager)
+        return if (binding.recyclerViewShopList.layoutManager is LinearLayoutManager) {
+            (binding.recyclerViewShopList.layoutManager as LinearLayoutManager)
                 .findFirstVisibleItemPosition()
         } else {
             default
         }
     }
 
-    private fun isOnePanelMode(): Boolean = shopItemContainer == null
+    private fun isOnePanelMode(): Boolean = binding.shopItemContainer == null
 
     private fun addShopItem(shopItemPosition: Int) {
         if (isOnePanelMode()) {

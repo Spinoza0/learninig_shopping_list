@@ -7,27 +7,21 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
+import com.spinoza.shoppinglist.databinding.FragmentShopItemBinding
 import com.spinoza.shoppinglist.domain.ShopItem
 import com.spinoza.shoppinglist.presentation.viewmodel.ShopItemViewModel
 import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
 
 class ShopItemFragment : Fragment() {
+    private var _binding: FragmentShopItemBinding? = null
+    private val binding: FragmentShopItemBinding
+        get() = _binding ?: throw RuntimeException("FragmentShopItemBinding == null")
 
     private lateinit var viewModel: ShopItemViewModel
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
-
-    private lateinit var textInputLayoutName: TextInputLayout
-    private lateinit var editTextName: TextInputEditText
-    private lateinit var textInputLayoutCount: TextInputLayout
-    private lateinit var editTextCount: TextInputEditText
-    private lateinit var buttonSave: Button
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
@@ -54,8 +48,9 @@ class ShopItemFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_shop_item, container, false)
+    ): View {
+        _binding = FragmentShopItemBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,13 +60,7 @@ class ShopItemFragment : Fragment() {
             this,
             ViewModelFactory(ShopListRepositoryImpl)
         )[ShopItemViewModel::class.java]
-
-        initViews(view)
-
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(ShopListRepositoryImpl)
-        )[ShopItemViewModel::class.java]
+        binding.viewModel = viewModel
 
         setupScreen()
         launchRightMode()
@@ -79,14 +68,19 @@ class ShopItemFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        savedName?.let { editTextName.setText(it) }
-        savedCount?.let { editTextCount.setText(it) }
+        savedName?.let { binding.editTextName.setText(it) }
+        savedCount?.let { binding.editTextCount.setText(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(SAVED_NAME, editTextName.text?.toString())
-        outState.putString(SAVED_COUNT, editTextCount.text?.toString())
+        outState.putString(SAVED_NAME, binding.editTextName.text?.toString())
+        outState.putString(SAVED_COUNT, binding.editTextCount.text?.toString())
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun launchRightMode() {
@@ -98,14 +92,21 @@ class ShopItemFragment : Fragment() {
 
     private fun launchEditMode() {
         viewModel.getShopItem(shopItemId)
-        buttonSave.setOnClickListener {
-            viewModel.editShopItem(editTextName.text?.toString(), editTextCount.text?.toString())
+        binding.buttonSave.setOnClickListener {
+            viewModel.editShopItem(
+                binding.editTextName.text?.toString(),
+                binding.editTextCount.text?.toString()
+            )
         }
+
     }
 
     private fun launchAddMode() {
-        buttonSave.setOnClickListener {
-            viewModel.addShopItem(editTextName.text?.toString(), editTextCount.text?.toString())
+        binding.buttonSave.setOnClickListener {
+            viewModel.addShopItem(
+                binding.editTextName.text?.toString(),
+                binding.editTextCount.text?.toString()
+            )
         }
     }
 
@@ -113,23 +114,12 @@ class ShopItemFragment : Fragment() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
         }
-        viewModel.shopItem.observe(viewLifecycleOwner) {
-            editTextName.setText(it.name)
-            editTextCount.setText(it.count.toString())
-        }
-        viewModel.errorInputName.observe(viewLifecycleOwner) {
-            textInputLayoutName.error = if (it) getString(R.string.error_input_name) else null
-
-        }
-        viewModel.errorInputCount.observe(viewLifecycleOwner) {
-            textInputLayoutCount.error = if (it) getString(R.string.error_input_count) else null
-        }
 
         setTextChangeListeners()
     }
 
     private fun setTextChangeListeners() {
-        editTextName.addTextChangedListener(object : TextWatcher {
+        binding.editTextName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -141,7 +131,7 @@ class ShopItemFragment : Fragment() {
             }
         })
 
-        editTextCount.addTextChangedListener(object : TextWatcher {
+        binding.editTextCount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -152,16 +142,6 @@ class ShopItemFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
             }
         })
-    }
-
-    private fun initViews(view: View) {
-        with(view) {
-            textInputLayoutName = findViewById(R.id.textInputLayoutName)
-            editTextName = findViewById(R.id.editTextName)
-            textInputLayoutCount = findViewById(R.id.textInputLayoutCount)
-            editTextCount = findViewById(R.id.editTextCount)
-            buttonSave = findViewById(R.id.buttonSave)
-        }
     }
 
     private fun parseParams() {
