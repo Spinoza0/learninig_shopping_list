@@ -2,8 +2,12 @@ package com.spinoza.shoppinglist.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import com.spinoza.shoppinglist.R
+import com.spinoza.shoppinglist.databinding.ItemShopDisabledBinding
+import com.spinoza.shoppinglist.databinding.ItemShopEnabledBinding
 import com.spinoza.shoppinglist.domain.ShopItem
 
 class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
@@ -17,27 +21,30 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCa
             VIEW_TYPE_DISABLED -> R.layout.item_shop_disabled
             else -> throw RuntimeException("Unknown view type: $viewType")
         }
-        val view = LayoutInflater.from(parent.context).inflate(
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
             layout,
             parent,
             false
         )
-        return ShopItemViewHolder(view)
+        return ShopItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = getItem(position)
-        with(holder) {
-            textViewName.text = shopItem.name
-            textViewCount.text = shopItem.count.toString()
+        val binding = holder.binding
+        binding.root.setOnLongClickListener {
+            onShopItemLongClickListener?.invoke(shopItem)
+            true
+        }
+        binding.root.setOnClickListener { onShopItemClickListener?.invoke(shopItem, position) }
 
-            view.setOnLongClickListener {
-                onShopItemLongClickListener?.invoke(shopItem)
-                true
+        when (binding) {
+            is ItemShopEnabledBinding -> {
+                binding.shopItem = shopItem
             }
-
-            view.setOnClickListener {
-                onShopItemClickListener?.invoke(shopItem, position)
+            is ItemShopDisabledBinding -> {
+                binding.shopItem = shopItem
             }
         }
     }
