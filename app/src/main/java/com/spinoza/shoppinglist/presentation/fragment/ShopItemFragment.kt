@@ -84,35 +84,21 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun launchRightMode() {
-        when (screenMode) {
-            MODE_EDIT -> launchEditMode()
-            MODE_ADD -> launchAddMode()
-        }
-    }
-
-    private fun launchEditMode() {
-        viewModel.getShopItem(shopItemId)
-        binding.buttonSave.setOnClickListener {
-            viewModel.editShopItem(
-                binding.editTextName.text?.toString(),
-                binding.editTextCount.text?.toString()
-            )
-        }
-
-    }
-
-    private fun launchAddMode() {
-        binding.buttonSave.setOnClickListener {
-            viewModel.addShopItem(
-                binding.editTextName.text?.toString(),
-                binding.editTextCount.text?.toString()
-            )
+        if (screenMode == MODE_EDIT) {
+            viewModel.getShopItem(shopItemId)
         }
     }
 
     private fun setupScreen() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
+        }
+
+        binding.buttonSave.setOnClickListener {
+            viewModel.saveShopItem(
+                binding.editTextName.text?.toString(),
+                binding.editTextCount.text?.toString()
+            )
         }
 
         setTextChangeListeners()
