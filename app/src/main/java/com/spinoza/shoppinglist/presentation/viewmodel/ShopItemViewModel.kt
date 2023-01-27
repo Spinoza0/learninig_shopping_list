@@ -8,11 +8,17 @@ import com.spinoza.shoppinglist.domain.ShopListRepository
 import com.spinoza.shoppinglist.domain.usecases.AddShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.EditShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.GetShopItemUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
     private val getShopItemUseCase = GetShopItemUseCase(repository)
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
+
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     private var editMode = false
 
@@ -33,24 +39,28 @@ class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
         get() = _shouldCloseScreen
 
     fun getShopItem(shopItemId: Int) {
-        _shopItem.value = getShopItemUseCase.getShopItem(shopItemId)
         editMode = true
+        scope.launch {
+            _shopItem.value = getShopItemUseCase.getShopItem(shopItemId)
+        }
     }
 
     fun saveShopItem(inputName: String?, inputCount: String?) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         if (validateInput(name, count)) {
-            if(editMode) {
-                _shopItem.value?.let {
-                    val shopItem = it.copy(name = name, count = count)
-                    editShopItemUseCase.editShopItem(shopItem)
+            scope.launch {
+                if (editMode) {
+                    _shopItem.value?.let {
+                        val shopItem = it.copy(name = name, count = count)
+                        editShopItemUseCase.editShopItem(shopItem)
+                        finishWork()
+                    }
+                } else {
+                    val shopItem = ShopItem(name, count, true)
+                    addShopItemUseCase.addShopItem(shopItem)
                     finishWork()
                 }
-            } else {
-                val shopItem = ShopItem(name, count, true)
-                addShopItemUseCase.addShopItem(shopItem)
-                finishWork()
             }
         }
     }
@@ -89,4 +99,8 @@ class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
         _shouldCloseScreen.value = Unit
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        scope.cancel()
+    }
 }
