@@ -3,22 +3,18 @@ package com.spinoza.shoppinglist.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.spinoza.shoppinglist.domain.ShopItem
 import com.spinoza.shoppinglist.domain.ShopListRepository
 import com.spinoza.shoppinglist.domain.usecases.AddShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.EditShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.GetShopItemUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
     private val getShopItemUseCase = GetShopItemUseCase(repository)
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
-
-    private val scope = CoroutineScope(Dispatchers.Main)
 
     private var editMode = false
 
@@ -40,7 +36,7 @@ class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
 
     fun getShopItem(shopItemId: Int) {
         editMode = true
-        scope.launch {
+        viewModelScope.launch {
             _shopItem.value = getShopItemUseCase.getShopItem(shopItemId)
         }
     }
@@ -49,7 +45,7 @@ class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         if (validateInput(name, count)) {
-            scope.launch {
+            viewModelScope.launch {
                 if (editMode) {
                     _shopItem.value?.let {
                         val shopItem = it.copy(name = name, count = count)
@@ -97,10 +93,5 @@ class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
 
     private fun finishWork() {
         _shouldCloseScreen.value = Unit
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        scope.cancel()
     }
 }
