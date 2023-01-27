@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.spinoza.shoppinglist.domain.ShopItem
 
 @Dao
 interface ShopListDao {
@@ -19,7 +18,7 @@ interface ShopListDao {
     fun deleteShopItem(shopItemId: Int)
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:shopItemId LIMIT 1")
-    fun getShopItem(shopItemId: Int): ShopItem
+    fun getShopItem(shopItemId: Int): ShopItemDbModel
 
     companion object {
         private const val TABLE_NAME = "shop_items"
