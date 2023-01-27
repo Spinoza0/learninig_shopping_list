@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(ShopListRepositoryImpl)
+            ViewModelFactory(ShopListRepositoryImpl(application))
         )[MainViewModel::class.java]
 
         if (intent.hasExtra(MOVE_MODE)) {
