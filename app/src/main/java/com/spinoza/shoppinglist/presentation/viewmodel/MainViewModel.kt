@@ -1,11 +1,13 @@
 package com.spinoza.shoppinglist.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.spinoza.shoppinglist.domain.ShopItem
 import com.spinoza.shoppinglist.domain.ShopListRepository
 import com.spinoza.shoppinglist.domain.usecases.DeleteShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.EditShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.GetShopListUseCase
+import kotlinx.coroutines.launch
 
 class MainViewModel(repository: ShopListRepository) : ViewModel() {
 
@@ -16,11 +18,15 @@ class MainViewModel(repository: ShopListRepository) : ViewModel() {
     val shopList = getShopListUseCase.getShopList()
 
     fun deleteShopItem(shopItem: ShopItem) {
-        deleteShopItemUseCase.deleteShopItem(shopItem)
+        viewModelScope.launch {
+            deleteShopItemUseCase.deleteShopItem(shopItem)
+        }
     }
 
     fun changeEnableState(shopItem: ShopItem) {
-        val newItem = shopItem.copy(enabled = !shopItem.enabled)
-        editShopItemUseCase.editShopItem(newItem)
+        viewModelScope.launch {
+            val newItem = shopItem.copy(enabled = !shopItem.enabled)
+            editShopItemUseCase.editShopItem(newItem)
+        }
     }
 }

@@ -56,7 +56,7 @@ class ShopItemFragment : Fragment() {
 
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(ShopListRepositoryImpl)
+            ViewModelFactory(ShopListRepositoryImpl(requireActivity().application))
         )[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
