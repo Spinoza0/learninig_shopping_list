@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spinoza.shoppinglist.R
-import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
 import com.spinoza.shoppinglist.databinding.ActivityMainBinding
 import com.spinoza.shoppinglist.presentation.adapter.ShopListAdapter
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
 import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModel
 import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -27,15 +27,20 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     private var firstVisiblePosition = 0
     private var modeAdd = false
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (application as ShopListApp).component
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(ShopListRepositoryImpl(application))
-        )[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
         if (intent.hasExtra(MOVE_MODE)) {
             when (intent.getStringExtra(MOVE_MODE)) {
@@ -95,8 +100,10 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             addShopItem(getFirstVisiblePosition(DEFAULT_VISIBLE_POSITION))
         }
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
 
             override fun onMove(
                 recyclerView: RecyclerView,

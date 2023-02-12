@@ -2,13 +2,15 @@ package com.spinoza.shoppinglist.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.spinoza.shoppinglist.domain.ShopListRepository
+import javax.inject.Inject
+import javax.inject.Provider
 
-class ViewModelFactory(private val repository: ShopListRepository) :
-    ViewModelProvider.Factory {
+class ViewModelFactory @Inject constructor(
+    private val viewModelProviders:
+    @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>,
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return modelClass
-            .getConstructor(ShopListRepository::class.java)
-            .newInstance(repository)
+        @Suppress("UNCHECKED_CAST")
+        return viewModelProviders[modelClass]?.get() as T
     }
 }

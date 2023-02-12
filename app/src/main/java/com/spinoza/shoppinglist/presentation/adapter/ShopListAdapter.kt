@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.databinding.ItemShopDisabledBinding
 import com.spinoza.shoppinglist.databinding.ItemShopEnabledBinding
-import com.spinoza.shoppinglist.domain.ShopItem
+import com.spinoza.shoppinglist.domain.model.ShopItem
 
 class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
 

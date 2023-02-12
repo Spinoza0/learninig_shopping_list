@@ -22,6 +22,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
+            android:hint="@string/name"
             app:errorInputName="@{viewModel.errorInputName}"
             app:layout_constraintBottom_toTopOf="@id/textInputLayoutCount"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +34,6 @@
                 android:id="@+id/editTextName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/name"
                 android:inputType="textCapWords"
                 android:text="@{viewModel.shopItem.name}"
                 app:textChangeListener="@{() -> viewModel.resetErrorInputName() }" />
@@ -47,6 +47,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
+            android:hint="@string/count"
             app:errorInputCount="@{viewModel.errorInputCount}"
             app:layout_constraintBottom_toTopOf="@id/buttonSave"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +58,6 @@
                 android:id="@+id/editTextCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/count"
                 android:inputType="numberDecimal"
                 android:text="@{String.valueOf(viewModel.shopItem.count)}"
                 app:textChangeListener="@{() -> viewModel.resetErrorInputCount() }" />

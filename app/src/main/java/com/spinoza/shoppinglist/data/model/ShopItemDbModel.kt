@@ -1,4 +1,4 @@
-package com.spinoza.shoppinglist.data
+package com.spinoza.shoppinglist.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
