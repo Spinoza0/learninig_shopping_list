@@ -2,18 +2,18 @@ package com.spinoza.shoppinglist.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.spinoza.shoppinglist.domain.ShopItem
-import com.spinoza.shoppinglist.domain.ShopListRepository
+import com.spinoza.shoppinglist.domain.model.ShopItem
 import com.spinoza.shoppinglist.domain.usecases.DeleteShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.EditShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.GetShopListUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(repository: ShopListRepository) : ViewModel() {
-
-    private val getShopListUseCase = GetShopListUseCase(repository)
-    private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
-    private val editShopItemUseCase = EditShopItemUseCase(repository)
+class MainViewModel @Inject constructor(
+    getShopListUseCase: GetShopListUseCase,
+    private val deleteShopItemUseCase: DeleteShopItemUseCase,
+    private val editShopItemUseCase: EditShopItemUseCase,
+) : ViewModel() {
 
     val shopList = getShopListUseCase.getShopList()
 

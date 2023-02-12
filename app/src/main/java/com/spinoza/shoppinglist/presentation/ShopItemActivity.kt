@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.spinoza.shoppinglist.R
-import com.spinoza.shoppinglist.domain.ShopItem
+import com.spinoza.shoppinglist.domain.model.ShopItem
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.MODE_ADD
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment.Companion.MODE_EDIT
@@ -33,8 +33,12 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
     override fun onEditingFinished() {
         supportFragmentManager.popBackStack()
         startActivity(
-            if (screenMode == MODE_ADD) MainActivity.newIntentMoveToEnd(this)
-            else MainActivity.newIntentRestorePosition(this, shopItemPosition)
+            if (screenMode == MODE_ADD) {
+                MainActivity.newIntentMoveToEnd(this)
+            }
+            else {
+                MainActivity.newIntentRestorePosition(this, shopItemPosition)
+            }
         )
         finish()
     }

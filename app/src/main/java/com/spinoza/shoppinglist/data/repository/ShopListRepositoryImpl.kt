@@ -1,16 +1,17 @@
-package com.spinoza.shoppinglist.data
+package com.spinoza.shoppinglist.data.repository
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.spinoza.shoppinglist.domain.ShopItem
-import com.spinoza.shoppinglist.domain.ShopListRepository
+import com.spinoza.shoppinglist.data.database.ShopListDao
+import com.spinoza.shoppinglist.data.mapper.ShopListMapper
+import com.spinoza.shoppinglist.domain.model.ShopItem
+import com.spinoza.shoppinglist.domain.repository.ShopListRepository
+import javax.inject.Inject
 
-class ShopListRepositoryImpl(application: Application) : ShopListRepository {
-
-    private val shopListDao = AppDatabase.getInstance(application).shopListDao()
-    private val mapper = ShopListMapper()
-
+class ShopListRepositoryImpl @Inject constructor(
+    private val shopListDao: ShopListDao,
+    private val mapper: ShopListMapper,
+) : ShopListRepository {
     override suspend fun addShopItem(shopItem: ShopItem) {
         shopListDao.addShopItem(mapper.mapEntityToDBModel(shopItem))
     }

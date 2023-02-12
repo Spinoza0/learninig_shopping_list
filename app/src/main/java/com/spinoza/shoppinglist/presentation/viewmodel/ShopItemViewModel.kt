@@ -4,17 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.spinoza.shoppinglist.domain.ShopItem
-import com.spinoza.shoppinglist.domain.ShopListRepository
+import com.spinoza.shoppinglist.domain.model.ShopItem
 import com.spinoza.shoppinglist.domain.usecases.AddShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.EditShopItemUseCase
 import com.spinoza.shoppinglist.domain.usecases.GetShopItemUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ShopItemViewModel(repository: ShopListRepository) : ViewModel() {
-    private val getShopItemUseCase = GetShopItemUseCase(repository)
-    private val addShopItemUseCase = AddShopItemUseCase(repository)
-    private val editShopItemUseCase = EditShopItemUseCase(repository)
+class ShopItemViewModel @Inject constructor(
+    private val getShopItemUseCase: GetShopItemUseCase,
+    private val addShopItemUseCase: AddShopItemUseCase,
+    private val editShopItemUseCase: EditShopItemUseCase,
+) : ViewModel() {
 
     private var editMode = false
 

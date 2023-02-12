@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.spinoza.shoppinglist.data.ShopListRepositoryImpl
 import com.spinoza.shoppinglist.databinding.FragmentShopItemBinding
-import com.spinoza.shoppinglist.domain.ShopItem
+import com.spinoza.shoppinglist.domain.model.ShopItem
+import com.spinoza.shoppinglist.presentation.ShopListApp
 import com.spinoza.shoppinglist.presentation.viewmodel.ShopItemViewModel
 import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
     private var _binding: FragmentShopItemBinding? = null
@@ -26,7 +27,16 @@ class ShopItemFragment : Fragment() {
     private var savedName: String? = null
     private var savedCount: String? = null
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as ShopListApp).component
+    }
+
     override fun onAttach(context: Context) {
+        component.inject(this)
+
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
@@ -54,10 +64,7 @@ class ShopItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(ShopListRepositoryImpl(requireActivity().application))
-        )[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 

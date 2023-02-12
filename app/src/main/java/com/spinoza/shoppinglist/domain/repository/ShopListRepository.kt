@@ -1,6 +1,7 @@
-package com.spinoza.shoppinglist.domain
+package com.spinoza.shoppinglist.domain.repository
 
 import androidx.lifecycle.LiveData
+import com.spinoza.shoppinglist.domain.model.ShopItem
 
 interface ShopListRepository {
     suspend fun addShopItem(shopItem: ShopItem)

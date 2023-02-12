@@ -1,4 +1,4 @@
-package com.spinoza.shoppinglist.domain
+package com.spinoza.shoppinglist.domain.model
 
 data class ShopItem(
     val name: String,

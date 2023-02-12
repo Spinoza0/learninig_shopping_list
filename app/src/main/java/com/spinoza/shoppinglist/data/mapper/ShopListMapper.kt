@@ -1,8 +1,10 @@
-package com.spinoza.shoppinglist.data
+package com.spinoza.shoppinglist.data.mapper
 
-import com.spinoza.shoppinglist.domain.ShopItem
+import com.spinoza.shoppinglist.data.model.ShopItemDbModel
+import com.spinoza.shoppinglist.domain.model.ShopItem
+import javax.inject.Inject
 
-class ShopListMapper {
+class ShopListMapper @Inject constructor(){
     fun mapEntityToDBModel(shopItem: ShopItem) = ShopItemDbModel(
         id = shopItem.id,
         name = shopItem.name,
