@@ -2,6 +2,7 @@ package com.spinoza.shoppinglist.di
 
 import android.app.Application
 import com.spinoza.cryptoapp.di.ViewModelModule
+import com.spinoza.shoppinglist.data.contentprovider.ShopListProvider
 import com.spinoza.shoppinglist.presentation.MainActivity
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
 import dagger.BindsInstance
@@ -12,6 +13,7 @@ import dagger.Component
 interface ApplicationComponent {
     fun inject(activity: MainActivity)
     fun inject(fragment: ShopItemFragment)
+    fun inject(shopListProvider: ShopListProvider)
 
     @Component.Factory
     interface Factory {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -11,10 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spinoza.shoppinglist.R
 import com.spinoza.shoppinglist.databinding.ActivityMainBinding
+import com.spinoza.shoppinglist.domain.model.ShopItem
 import com.spinoza.shoppinglist.presentation.adapter.ShopListAdapter
 import com.spinoza.shoppinglist.presentation.fragment.ShopItemFragment
 import com.spinoza.shoppinglist.presentation.viewmodel.MainViewModel
 import com.spinoza.shoppinglist.presentation.viewmodel.ViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
@@ -60,15 +65,30 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         setupListeners()
         setupObservers()
 
-
-        contentResolver.query(
-            Uri.parse("content://com.spinoza.shoppinglist/shop_items/35"),
-            null,
-            null,
-            null,
-            null,
-            null,
-        )
+        CoroutineScope(Dispatchers.IO).launch {
+            contentResolver.query(
+                Uri.parse("content://com.spinoza.shoppinglist/shop_items/35"),
+                null,
+                null,
+                null,
+                null,
+                null,
+            )?.let { cursor ->
+                while (cursor.moveToNext()) {
+                    Log.d("MainActivity", "cursor.columnCount = ${cursor.columnCount}")
+                    cursor.columnNames.forEach {
+                        Log.d("MainActivity", "cursor.columnNames = $it")
+                    }
+                    val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                    val count = cursor.getFloat(cursor.getColumnIndexOrThrow("count"))
+                    val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                    val shopItem = ShopItem(id = id, name = name, count = count, enabled = enabled)
+                    Log.d("MainActivity", "shopItem = ${shopItem.toString()}")
+                }
+                cursor.close()
+            }
+        }
     }
 
     private fun setupObservers() {
