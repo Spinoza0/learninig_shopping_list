@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
         CoroutineScope(Dispatchers.IO).launch {
             contentResolver.query(
-                Uri.parse("content://com.spinoza.shoppinglist/shop_items/35"),
+                Uri.parse("content://com.spinoza.shoppinglist/shop_items"),
                 null,
                 null,
                 null,

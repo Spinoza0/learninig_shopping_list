@@ -6,13 +6,22 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import com.spinoza.shoppinglist.data.database.ShopListDao
+import com.spinoza.shoppinglist.data.mapper.ShopListMapper
+import com.spinoza.shoppinglist.data.model.ShopItemDbModel
+import com.spinoza.shoppinglist.domain.model.ShopItem
 import com.spinoza.shoppinglist.presentation.ShopListApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ShopListProvider : ContentProvider() {
 
     @Inject
     lateinit var shopListDao: ShopListDao
+
+    @Inject
+    lateinit var mapper: ShopListMapper
 
     private val component by lazy {
         (context as ShopListApp).component
@@ -45,7 +54,21 @@ class ShopListProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        TODO("Not yet implemented")
+        when (uriMatcher.match(uri)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                if (values != null) {
+                    val id = values.getAsInteger(ShopItemDbModel.ID)
+                    val name = values.getAsString(ShopItemDbModel.NAME)
+                    val count = values.getAsFloat(ShopItemDbModel.COUNT)
+                    val enabled = values.getAsBoolean(ShopItemDbModel.ENABLED)
+                    val shopItem = ShopItem(name, count, enabled, id)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        shopListDao.addShopItem(mapper.mapEntityToDBModel(shopItem))
+                    }
+                }
+            }
+        }
+        return null
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {

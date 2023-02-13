@@ -1,6 +1,8 @@
 package com.spinoza.shoppinglist.presentation.fragment
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -105,6 +107,18 @@ class ShopItemFragment : Fragment() {
                 binding.editTextName.text?.toString(),
                 binding.editTextCount.text?.toString()
             )
+
+            if (screenMode == MODE_ADD) {
+                context?.contentResolver?.insert(
+                    Uri.parse("content://com.spinoza.shoppinglist/shop_items/35"),
+                    ContentValues().apply {
+                        put("id", 0)
+                        put("name", binding.editTextName.text.toString())
+                        put("count", binding.editTextCount.text.toString().toFloat())
+                        put("enabled", true)
+                    }
+                )
+            }
         }
     }
 

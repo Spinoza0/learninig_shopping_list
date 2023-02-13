@@ -14,5 +14,9 @@ data class ShopItemDbModel(
 ) {
     companion object {
         const val TABLE_NAME = "shop_items"
+        const val NAME = "name"
+        const val COUNT = "count"
+        const val ENABLED = "enabled"
+        const val ID = "id"
     }
 }
