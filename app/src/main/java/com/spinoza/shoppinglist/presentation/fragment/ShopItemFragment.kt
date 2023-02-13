@@ -26,6 +26,7 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+    private lateinit var shopItem: ShopItem
     private var savedName: String? = null
     private var savedCount: String? = null
 
@@ -98,25 +99,41 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun setupScreen() {
+        viewModel.shopItem.observe(viewLifecycleOwner) {
+            shopItem = it
+        }
+
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
         }
 
         binding.buttonSave.setOnClickListener {
-            viewModel.saveShopItem(
-                binding.editTextName.text?.toString(),
-                binding.editTextCount.text?.toString()
-            )
+//            viewModel.saveShopItem(
+//                binding.editTextName.text?.toString(),
+//                binding.editTextCount.text?.toString()
+//            )
 
             if (screenMode == MODE_ADD) {
                 context?.contentResolver?.insert(
-                    Uri.parse("content://com.spinoza.shoppinglist/shop_items/35"),
+                    Uri.parse("content://com.spinoza.shoppinglist/shop_items"),
                     ContentValues().apply {
                         put("id", 0)
                         put("name", binding.editTextName.text.toString())
                         put("count", binding.editTextCount.text.toString().toFloat())
                         put("enabled", true)
                     }
+                )
+            } else {
+                context?.contentResolver?.update(
+                    Uri.parse("content://com.spinoza.shoppinglist/shop_items"),
+                    ContentValues().apply {
+                        put("id", shopItemId)
+                        put("name", binding.editTextName.text.toString())
+                        put("count", binding.editTextCount.text.toString().toFloat())
+                        put("enabled", shopItem.enabled)
+                    },
+                    null,
+                    null
                 )
             }
         }

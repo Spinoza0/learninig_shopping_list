@@ -143,7 +143,12 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             ): Boolean = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                viewModel.deleteShopItem(shopListAdapter.currentList[viewHolder.adapterPosition])
+//                viewModel.deleteShopItem(shopListAdapter.currentList[viewHolder.adapterPosition])
+                contentResolver.delete(
+                    Uri.parse("content://com.spinoza.shoppinglist/shop_items"),
+                    null,
+                    arrayOf(shopListAdapter.currentList[viewHolder.adapterPosition].id.toString())
+                )
             }
         }).attachToRecyclerView(binding.recyclerViewShopList)
     }

@@ -22,6 +22,9 @@ interface ShopListDao {
     @Query("DELETE FROM ${ShopItemDbModel.TABLE_NAME} WHERE id=:shopItemId")
     suspend fun deleteShopItem(shopItemId: Int)
 
+    @Query("DELETE FROM ${ShopItemDbModel.TABLE_NAME} WHERE id=:shopItemId")
+    suspend fun deleteShopItemThenReturnNumberOfItemsRemoved(shopItemId: Int): Int
+
     @Query("SELECT * FROM ${ShopItemDbModel.TABLE_NAME} WHERE id=:shopItemId LIMIT 1")
     suspend fun getShopItem(shopItemId: Int): ShopItemDbModel
 }
