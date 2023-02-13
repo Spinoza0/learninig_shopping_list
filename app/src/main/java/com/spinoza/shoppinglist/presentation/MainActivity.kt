@@ -2,6 +2,7 @@ package com.spinoza.shoppinglist.presentation
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -58,6 +59,16 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         setupRecyclerView()
         setupListeners()
         setupObservers()
+
+
+        contentResolver.query(
+            Uri.parse("content://com.spinoza.shoppinglist/shop_items"),
+            null,
+            null,
+            null,
+            null,
+            null,
+        )
     }
 
     private fun setupObservers() {

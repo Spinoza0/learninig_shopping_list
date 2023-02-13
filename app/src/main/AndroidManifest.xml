@@ -34,6 +34,11 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <provider
+            android:name=".data.contentprovider.ShopListProvider"
+            android:authorities="com.spinoza.shoppinglist"
+            android:exported="true" />
     </application>
 
 </manifest>
