@@ -30,6 +30,7 @@ class ShopListProvider : ContentProvider() {
 
     private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
         addURI(AUTHORITY, PATH, GET_SHOP_ITEMS_QUERY)
+        addURI(AUTHORITY, PATH_ID, GET_SHOP_ITEMS_QUERY_BY_ID)
     }
 
     override fun onCreate(): Boolean {
@@ -113,9 +114,11 @@ class ShopListProvider : ContentProvider() {
     }
 
     companion object {
-        private const val PATH = "shop_items"                       // # - number
-        private const val PATH2 = "shop_items/*"                    // * - string
-        private const val AUTHORITY = "com.spinoza.shoppinglist"    // see manifest
-        private const val GET_SHOP_ITEMS_QUERY = 100                // random number
+        private const val PATH = "shop_items"
+        private const val PATH_ID = "shop_items/#"                          // # - number
+        //private const val PATH_ID = "shop_items/*"                        // * - string
+        private const val AUTHORITY = "com.spinoza.shoppinglist"            // see manifest
+        private const val GET_SHOP_ITEMS_QUERY = 100                        // random number
+        private const val GET_SHOP_ITEMS_QUERY_BY_ID = 101                  // random number
     }
 }
